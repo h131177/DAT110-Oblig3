@@ -9,6 +9,7 @@ package no.hvl.dat110.util;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -23,29 +24,39 @@ public class Hash {
 		// we use MD5 with 128 bits digest
 		
 		// compute the hash of the input 'entity'
-		
-		// convert the hash into hex format
-		
-		// convert the hex into BigInteger
+		try {
+			MessageDigest msgD = MessageDigest.getInstance("MD5");
+			byte[] digest = msgD.digest(entity.getBytes(StandardCharsets.UTF_8));
+			
+			// convert the hash into hex format
+			String hexValue = toHex(digest);
+			// convert the hex into BigInteger
+			hashint = new BigInteger(hexValue, 16);
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
 		
 		// return the BigInteger
-		
 		return hashint;
 	}
 	
 	public static BigInteger addressSize() {
 		
 		// Task: compute the address size of MD5
-		
-		// get the digest length
-		
-		// compute the number of bits = digest length * 8
-		
 		// compute the address size = 2 ^ number of bits
+		BigInteger addressSize = new BigInteger("2");
+		int digLength = 0;
+		// get the digest length
+		try {
+			digLength = MessageDigest.getInstance("MD5").getDigestLength();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		// compute the number of bits = digest length * 8
+		int nBits = digLength*8;
 		
 		// return the address size
-		
-		return null;
+		return addressSize.pow(nBits);
 	}
 	
 	public static int bitSize() {
@@ -53,6 +64,11 @@ public class Hash {
 		int digestlen = 0;
 		
 		// find the digest length
+		try {
+			digestlen = MessageDigest.getInstance("MD5").getDigestLength();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
 		
 		return digestlen*8;
 	}
